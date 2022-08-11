@@ -1,34 +1,31 @@
-package com.example.mvc.Controller;
+package com.ecommerce.mvc.controllers;
 
-import com.example.mvc.model.Customer;
-import com.example.mvc.service.CustomerService;
+import com.ecommerce.mvc.models.Customer;
+import com.ecommerce.mvc.services.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.validation.Valid;
-import java.util.List;
-
-@RestController
 public class CustomerController {
 
     @Autowired
     private CustomerService customerService;
 
-    @GetMapping("login")
-    public List<Customer> getCustomers(){
-        List<Customer> customers = customerService.findAll();
-        return customers;
-    }
-
-    @PostMapping("login")
-    public Customer addCustomer(@Valid @ModelAttribute("login") Customer customer, BindingResult result){
-        if(result.hasErrors()){
-            customer.setName("error");
-        }
-        customerService.save(customer);
+    @GetMapping("/account")
+    public Customer getCustomer(@RequestParam(value = "name" ) String name,
+                                @RequestParam(value = "emailId") String emailId,
+                                @RequestParam(value = "contactNo") String contactNo){
+        Customer customer = new Customer();
+        customer.setName(name);
+        customer.setEmailId(emailId);
+        customer.setContactNo(contactNo);
         return customer;
     }
 
+    @PostMapping("/account")
+    public Customer addCustomer(@RequestBody Customer customer){
+        return customerService.saveAndFlush(customer);
+    }
 }
